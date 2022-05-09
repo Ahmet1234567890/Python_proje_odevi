@@ -1,0 +1,169 @@
+import time
+kimlik=[]
+
+try:
+    kullanıcı_dosyası= open("kullanıcı_dosyası.txt", "x", encoding="UTF-8")
+    kullanıcı_dosyası.close()
+
+except:
+    kullanıcı_dosyası=open("kullanıcı_dosyası.txt","r",encoding="UTF-8")
+
+try:
+    gelir_dosyası=open("gelir_dosyası.txt", "x")
+    gelir_dosyası.close()
+except:
+    gelir_dosyası=open("gelir_dosyası.txt","r")
+
+
+def kullanıcı_girisi():
+    with open("kullanıcı_dosyası.txt") as f:
+        isim=input("Kullanıcı ismi..:")
+        soy_isim=input("Kullanıcı soyadı..:")
+        parola=input("Kullanıcı şifre..:")
+        içerik = f.readlines()
+        uzunluk=len(içerik)
+        b=0
+        for i in range(uzunluk):
+            ad = içerik[b].split("%&")[0]
+            soyad=içerik[b].split("%&")[1]
+            sifre=içerik[b].split("%&")[2]
+            b+=1
+
+            if isim==ad and soy_isim==soyad and sifre==parola:
+                print("Giriş başarılı")
+                print("*"*10)
+                menü()
+
+        else:
+            print("Giriş başarısız")
+            baslangıc()
+
+
+def hesap_olusturma():
+    print("Hesap oluşturma işlemine başlanıyor \nYapılan işlemler sonradan değiştirilemez")
+    ad=input("Ad..:")
+    soyad=input("Soyad..:")
+    sifre=input("Şifre..:")
+    kullanıcı_dosyası=open("kullanıcı_dosyası.txt","a")
+    kullanıcı_dosyası.write(ad)
+    kullanıcı_dosyası.write("%&")
+    kullanıcı_dosyası.write(soyad)
+    kullanıcı_dosyası.write("%&")
+    kullanıcı_dosyası.write(sifre)
+    kullanıcı_dosyası.write("%&")
+    kullanıcı_dosyası.write("\n")
+    kullanıcı_dosyası.close()
+    print("Bilgiler kaydedildi\n")
+    print("*"*10)
+    baslangıc()
+
+
+def menü():
+    print("1) Gelir girişi\n2) Gider girişi\n3) Rapor\n4) Oturumu kapat")
+    islem=input("Yapmak istediğiniz işlem numarasını giriniz..:")
+    if islem=="1":
+        print("Gelir girişine yönlendiriliyor")
+        print("*"*20)
+
+        gelir_dosyası = open("gelir_dosyası.txt", "a")
+        print("Gelir işlemleri başlatılıyor")
+        gelir_islemleri()
+
+    elif islem=="2":
+        print("Gider girişine yönleniriliyor")
+        print("*"*20)
+        gider_islemleri()
+
+
+    elif islem=="3":
+        rapor()
+
+    elif islem=="4":
+        print("Oturumunuz kapatılıyor")
+        print("*"*10)
+        baslangıc()
+
+    else:
+        print("Lütfen geçerli bir değer giriniz")
+        menü()
+
+def gelir_islemleri():
+    gelir_dosyası=open("gelir_dosyası.txt", "a")
+    tarih=input("Tarih..:")
+    acıklama=input("Açıklama..:")
+    gelir=input("Gelir miktarı..:")
+
+    gelir_dosyası.write(tarih)
+    gelir_dosyası.write("%&")
+    gelir_dosyası.write(acıklama)
+    gelir_dosyası.write("%&")
+    gelir_dosyası.write(gelir)
+    gelir_dosyası.write("%&")
+    gelir_dosyası.writelines("0")
+    gelir_dosyası.write("\n")
+    gelir_dosyası.close()
+    print("Veriler kaydedildi")
+    menü()
+
+
+def gider_islemleri():
+    gelir_dosyası=open("gelir_dosyası.txt", "a")
+    tarih=input("Tarih..:")
+    acıklama=input("Açıklama..:")
+    gider=input("Gider miktarı..:")
+    gelir_dosyası.write(tarih)
+    gelir_dosyası.write("%&")
+    gelir_dosyası.write(acıklama)
+    gelir_dosyası.write("%&")
+    gelir_dosyası.write("0")
+    gelir_dosyası.write("%&")
+    gelir_dosyası.write(gider)
+    gelir_dosyası.write("\n")
+    gelir_dosyası.close()
+    print("Veriler kaydedildi")
+    menü()
+
+def  yenideger(abc):
+    deger=""
+    i =len(abc)
+    deger=abc + " "*(20-i)
+    return deger
+
+
+def rapor():
+    with open("gelir_dosyası.txt") as f:
+        gelir_degeri=0
+        gider_degeri=0
+        içerik=f.readlines()
+        uzunluk=len(içerik)
+        print(yenideger("Tarih"),yenideger("Açıklama"),yenideger("Gelir"),yenideger("Gider"))
+        b=0
+
+        for i in range(uzunluk):
+            tarih=içerik[b].split("%&")[0]
+            açıklama=içerik[b].split("%&")[1]
+            gelir=içerik[b].split("%&")[2]
+            gider=içerik[b].split("%&")[3]
+            gider=gider.replace("\n","")
+            gelir_degeri+=int(gelir)
+            gider_degeri+=int(gider)
+            b+=1
+            print(yenideger(tarih),yenideger(açıklama),yenideger(gelir),yenideger(gider))
+    print("\n","Toplam..:",gelir_degeri-gider_degeri,"\n","*"*20)
+    time.sleep(2)
+    menü()
+
+
+def baslangıc():
+    islem=input("Hoş geldiniz\nKullanıcı girişi yapmak için 1,\nHesap oluşturmak için 2'yi tuşlayınız..:")
+    if islem=="1":
+        kullanıcı_girisi()
+
+    elif islem=="2":
+        hesap_olusturma()
+
+    else:
+        print("Lütfen geçerli bir değer girin")
+        baslangıc()
+
+baslangıc()
